@@ -54,10 +54,27 @@ const db = require('./db');
 // --- Error Handler ---
 app.use(security.errorHandler);
 
+// --- Health Check / Diagnostic ---
+app.get('/health-check', async (req, res) => {
+  try {
+    const tables = await db.raw("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname='public'");
+    const migrationStatus = await db('knex_migrations').select('*').catch(() => []);
+    res.json({
+      status: 'ok',
+      db: 'connected',
+      tables: tables.rows.map(r => r.tablename),
+      migrations: migrationStatus.length,
+      env: process.env.NODE_ENV
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', error: err.message, stack: err.stack });
+  }
+});
+
 // --- DB Migrations & Server Start ---
 db.migrate.latest()
-  .then(() => {
-    console.log('[DB] Migrations ran successfully');
+  .then((batch) => {
+    console.log('[DB] Migrations ran successfully, batch:', batch);
     app.listen(PORT, () => {
       console.log(`🤖 ChatBot SaaS running on port ${PORT}`);
       console.log(`📡 Webhook: /webhook`);
@@ -65,6 +82,9 @@ db.migrate.latest()
     });
   })
   .catch(err => {
-    console.error('[DB] Failed to run migrations:', err);
-    process.exit(1);
+    console.error('[DB] Migration Error (Continuing to allow debug):', err.message);
+    // Start server anyway so we can hit /health-check to see the error
+    app.listen(PORT, () => {
+      console.log(`🤖 ChatBot SaaS running on port ${PORT} (WITH DB ERROR)`);
+    });
   });
