@@ -328,8 +328,24 @@ export default function BotConfigPage() {
                     <input className="input-field" value={opt.label} onChange={e => updateOption(i, 'label', e.target.value)} placeholder="Ej: Ver Menu 📋" />
                   </div>
                   <div className="input-group">
-                    <label>Respuesta cuando eligen esta opcion</label>
-                    <textarea className="input-field" value={opt.response} onChange={e => updateOption(i, 'response', e.target.value)} rows={3} style={{ width: '100%' }} placeholder="Lo que el bot responde..." />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 4 }}>
+                      <label style={{ margin: 0 }}>Respuesta cuando eligen esta opcion</label>
+                      {opt.response !== '__FLOW_BOOKING__' ? (
+                        <button className="btn btn-secondary btn-sm" onClick={() => updateOption(i, 'response', '__FLOW_BOOKING__')} style={{ fontSize: '0.7rem', padding: '2px 6px' }}>
+                          📅 Usar Flujo de Reservas Inteligente
+                        </button>
+                      ) : (
+                        <span className="badge badge-active" style={{ fontSize: '0.7rem' }}>Flujo de Reservas Activado</span>
+                      )}
+                    </div>
+                    {opt.response === '__FLOW_BOOKING__' ? (
+                      <div style={{ padding: 'var(--space-md)', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 'var(--radius-sm)', color: 'var(--color-primary-light)', fontSize: '0.85rem' }}>
+                        <strong>✨ Flujo de Reservas Interactivo:</strong><br/>
+                        Al seleccionar esta opcion, el bot enviará los horarios disponibles de esta semana y guiará al cliente paso a paso para agendar su turno automáticamente en el calendario.
+                      </div>
+                    ) : (
+                      <textarea className="input-field" value={opt.response} onChange={e => updateOption(i, 'response', e.target.value)} rows={3} style={{ width: '100%' }} placeholder="Lo que el bot responde..." />
+                    )}
                   </div>
                 </div>
               ))}
