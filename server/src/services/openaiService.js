@@ -28,22 +28,41 @@ async function generateResponse(tenantApiKey, systemPrompt, conversationHistory,
 
     messages.push({ role: 'user', content: userMessage });
 
-    const completion = await openai.chat.completions.create({
+    const completionParams = {
       model,
       messages,
       max_tokens: maxTokens,
       temperature
-    });
+    };
 
-    const reply = completion.choices[0]?.message?.content?.trim();
+    // If we have AI tools (e.g., booking functions) defined, pass them
+    if (options.tools && options.tools.length > 0) {
+      completionParams.tools = options.tools;
+      completionParams.tool_choice = 'auto'; // Let the AI decide if it wants to use a tool
+    }
+
+    const completion = await openai.chat.completions.create(completionParams);
+
+    const messageObj = completion.choices[0]?.message;
+    
+    // If the AI decided to call a tool, return the toolCalls info
+    if (messageObj?.tool_calls?.length > 0) {
+      console.log(`[OpenAI] AI invoked tool: ${messageObj.tool_calls[0].function.name}`);
+      return {
+        toolCalls: messageObj.tool_calls,
+        content: messageObj.content
+      };
+    }
+
+    const reply = messageObj?.content?.trim();
 
     if (!reply) {
       console.warn('[OpenAI] Empty response');
-      return 'Lo siento, no pude procesar tu mensaje. ¿Podrías intentarlo de nuevo?';
+      return { content: 'Lo siento, no pude procesar tu mensaje. ¿Podrías intentarlo de nuevo?' };
     }
 
     console.log(`[OpenAI] (${completion.usage?.total_tokens} tokens): ${reply.substring(0, 60)}...`);
-    return reply;
+    return { content: reply };
   } catch (error) {
     console.error('[OpenAI] Error:', error.message);
 
