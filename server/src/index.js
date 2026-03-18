@@ -49,11 +49,22 @@ app.get('/api/auth/me', authenticate, (req, res) => {
   res.json({ user: req.user, tenant: req.tenant });
 });
 
+const db = require('./db');
+
 // --- Error Handler ---
 app.use(security.errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🤖 ChatBot SaaS running on port ${PORT}`);
-  console.log(`📡 Webhook: /webhook`);
-  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// --- DB Migrations & Server Start ---
+db.migrate.latest()
+  .then(() => {
+    console.log('[DB] Migrations ran successfully');
+    app.listen(PORT, () => {
+      console.log(`🤖 ChatBot SaaS running on port ${PORT}`);
+      console.log(`📡 Webhook: /webhook`);
+      console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+  })
+  .catch(err => {
+    console.error('[DB] Failed to run migrations:', err);
+    process.exit(1);
+  });
