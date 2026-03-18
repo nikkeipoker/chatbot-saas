@@ -5,6 +5,7 @@ const validator = require('validator');
 const db = require('../db');
 const { generateToken } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/security');
+const { sendPasswordResetEmail } = require('../services/emailService');
 
 const router = express.Router();
 router.use(authLimiter);
@@ -100,11 +101,9 @@ router.post('/forgot-password', async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    // For now: log the URL (in production, integrate with Resend/SendGrid)
-    console.log(`[PasswordReset] Reset URL for ${email}: ${resetUrl}`);
-
-    // If SMTP/email service configured, send email here
-    // await sendResetEmail(email, resetUrl);
+    // Send real email via Resend
+    await sendPasswordResetEmail(user.email, resetUrl);
+    console.log(`[Auth] Password reset email sent to ${email}`);
 
     res.json({
       message: 'Si el email existe, recibirás un link',
