@@ -27,8 +27,8 @@ export default function CalendarPage() {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [apptRes, rulesRes] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments`, { headers }),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments/rules`, { headers })
+        fetch('/api/appointments', { headers }),
+        fetch('/api/appointments/rules', { headers })
       ]);
 
       const apptData = await apptRes.json();
@@ -86,7 +86,7 @@ export default function CalendarPage() {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments/rules`, {
+      const res = await fetch('/api/appointments/rules', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
