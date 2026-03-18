@@ -81,12 +81,115 @@ export default function BotConfigPage() {
 
   const promptTemplates = [
     { name: '🍽️ Restaurante', prompt: 'Eres el asistente virtual de un restaurante. Ayudas con menu, reservas, horarios y ubicacion. Responde en espanol, breve y profesional. Si piden reservar, pedi: nombre, dia, hora y cantidad.' },
-    { name: '🏪 Tienda', prompt: 'Eres el asistente de una tienda. Ayudas con productos, precios, disponibilidad y envios. Responde en espanol, claro y util.' },
-    { name: '🏥 Clinica', prompt: 'Eres el asistente de una clinica. Ayudas a agendar turnos, consultar horarios y preguntas frecuentes. Profesional y empatico.' },
-    { name: '🔧 Tecnico', prompt: 'Eres el asistente de un servicio tecnico. Ayudas a describir problemas, agendar visitas y presupuestos. Tecnico pero accesible.' }
+    { name: '🏪 Tienda', prompt: 'Eres el asistente de una tienda online y fisica. Ayudas con productos, precios, disponibilidad y envios. Responde en espanol, claro y util. Si preguntan por un articulo no disponible, ofrece alternativas.' },
+    { name: '🏥 Clinica', prompt: 'Eres el asistente de una clinica medica. Ayudas a agendar turnos, consultar especialidades, horarios y cobertura de obras sociales. Responde de forma profesional y empatica en espanol.' },
+    { name: '🏋️ Gimnasio', prompt: 'Eres el asistente de un gimnasio. Ayudas con informacion sobre membresias, clases, horarios y promociones. Responde de forma energica y motivadora en espanol.' },
+    { name: '💈 Peluqueria', prompt: 'Eres el asistente de una peluqueria o salon de belleza. Ayudas a agendar turnos, informas sobre servicios, precios y disponibilidad. Responde de forma amigable y cercana en espanol.' },
+    { name: '🔧 Tecnico', prompt: 'Eres el asistente de un servicio tecnico. Ayudas a describir problemas, agendar visitas domiciliarias y consultar presupuestos. Responde en espanol de forma tecnica pero accesible.' },
   ];
 
-  const emojiOptions = ['🏪', '🍽️', '🍣', '🍕', '☕', '🏥', '💈', '🛒', '🔧', '🎓', '🏋️', '🎭', '🌺', '⭐', '💎'];
+  // Rich templates for static mode welcome message + options
+  const welcomeTemplates = [
+    {
+      id: 'restaurant',
+      name: '🍽️ Restaurante',
+      emoji: '🍽️',
+      description: 'Menu, reservas, horarios y ubicacion',
+      options: [
+        { label: 'Ver Menu 📋', response: '📋 Nuestro menu completo:\n\nEntradas, platos principales y postres disponibles.\n\n📱 Ver menu digital: [pega tu link aqui]' },
+        { label: 'Hacer una Reserva 📅', response: '📅 Para reservar, necesito:\n\n• Tu nombre\n• Dia y hora\n• Cantidad de personas\n\n¡Escribime esos datos!' },
+        { label: 'Horarios 🕐', response: '🕐 Nuestros horarios:\n\nLunes a Viernes: 12:00 - 00:00\nSabados: 12:00 - 01:00\nDomingos: 12:00 - 23:00' },
+        { label: 'Como llegar 📍', response: '📍 Nos encontras en:\n\n[Tu direccion aqui]\n\nGoogle Maps: [link]' },
+        { label: 'Hablar con alguien 👋', response: '👋 En breve un encargado te va a responder. Gracias por tu paciencia!' },
+      ]
+    },
+    {
+      id: 'bar',
+      name: '☕ Bar / Cafe',
+      emoji: '☕',
+      description: 'Carta de bebidas, horarios y delivery',
+      options: [
+        { label: 'Ver Carta ☕', response: '☕ Nuestra carta:\n\nCafes especiales, tragos, empanadas, sandwiches y mas.\n\n📱 Carta completa: [link]' },
+        { label: 'Delivery 🛵', response: '🛵 Hacemos delivery!\n\nZona de cobertura: [tu zona]\nTiempo estimado: 30-45 min\nPedidos por: PedidosYa / Rappi / directo' },
+        { label: 'Horarios 🕐', response: '🕐 Estamos abiertos:\n\nLunes a Jueves: 09:00 - 23:00\nViernes y Sabado: 09:00 - 02:00\nDomingos: 10:00 - 22:00' },
+        { label: 'Donde estamos 📍', response: '📍 Encontranos en:\n\n[Tu direccion]\n\n📍 Google Maps: [link]' },
+      ]
+    },
+    {
+      id: 'retail',
+      name: '🛒 Tienda / Local',
+      emoji: '🛒',
+      description: 'Productos, precios y envios',
+      options: [
+        { label: 'Ver Productos 🛍️', response: '🛍️ Nuestro catalogo completo:\n\n📱 Tienda online: [link]\n\n¿Buscas algo en particular? ¡Escribime y te ayudo!' },
+        { label: 'Consultar Precio 💰', response: '💰 Cuéntame qué producto te interesa y te paso el precio actualizado al momento.' },
+        { label: 'Envios y Pagos 🚚', response: '🚚 Envios:\n• Capital: $XXXX (24-48hs)\n• Interior: Consultar\n• Retiro en local: gratis\n\n💳 Pagamos con: efectivo, tarjeta, transferencia' },
+        { label: 'Horarios del local 🕐', response: '🕐 Horarios de atencion:\n\nLunes a Viernes: 09:00 - 19:00\nSabados: 09:00 - 14:00' },
+        { label: 'Otra consulta 💬', response: '💬 Decime en que puedo ayudarte y te respondo lo antes posible!' },
+      ]
+    },
+    {
+      id: 'gym',
+      name: '🏋️ Gimnasio',
+      emoji: '🏋️',
+      description: 'Membresias, clases y horarios',
+      options: [
+        { label: 'Membresias y Precios 💪', response: '💪 Nuestros planes:\n\n• Mensual: $XXXX\n• Trimestral: $XXXX (-10%)\n• Anual: $XXXX (-20%)\n\nTodos incluyen acceso libre + clases grupales' },
+        { label: 'Horario de Clases 📅', response: '📅 Clases grupales:\n\n• Yoga: Lunes y Miercoles 09:00\n• Spinning: Martes y Jueves 18:00\n• Pilates: Viernes 10:00\n• Funcional: Sabados 09:00' },
+        { label: 'Horarios del gym 🕐', response: '🕐 Estamos abiertos:\n\nLunes a Viernes: 06:00 - 23:00\nSabados: 08:00 - 20:00\nDomingos: 09:00 - 14:00' },
+        { label: 'Donde estamos 📍', response: '📍 Encontranos en:\n\n[Tu direccion]\n\nGoogle Maps: [link]' },
+        { label: 'Probar una clase gratis 🎁', response: '🎁 ¡Si, ofrecemos una clase de prueba gratuita!\n\nEscribime tu nombre y te coordinamos la proxima clase disponible.' },
+      ]
+    },
+    {
+      id: 'clinic',
+      name: '🏥 Clinica / Doctor',
+      emoji: '🏥',
+      description: 'Turnos, especialidades y cobertura',
+      options: [
+        { label: 'Sacar un Turno 📅', response: '📅 Para sacar un turno necesito:\n\n• Tu nombre completo\n• Especialidad que buscas\n• Obra social (si tenes)\n• Dia y horario de preferencia\n\n¡Escribime esa info!' },
+        { label: 'Especialidades 👨‍⚕️', response: '👨‍⚕️ Nuestras especialidades:\n\n• Medicina general\n• Pediatria\n• Ginecologia\n• Cardiologia\n• [Otras especialidades]' },
+        { label: 'Obras Sociales 💳', response: '💳 Aceptamos:\n\n✅ OSDE\n✅ Swiss Medical\n✅ Medicus\n✅ [Otras obras sociales]\n\n¿Tu obra social no esta? Consulta igual, tenemos precios accesibles.' },
+        { label: 'Horarios de atencion 🕐', response: '🕐 Horarios:\n\nLunes a Viernes: 08:00 - 20:00\nSabados: 08:00 - 13:00' },
+      ]
+    },
+    {
+      id: 'beauty',
+      name: '💈 Peluqueria / Salon',
+      emoji: '💈',
+      description: 'Turnos, servicios y precios',
+      options: [
+        { label: 'Reservar un Turno 📅', response: '📅 Para reservar tu turno:\n\n¿Que servicio necesitas?\n¿Que dia y horario te viene bien?\n\n¡Escribime y lo coordinamos!' },
+        { label: 'Servicios y Precios 💰', response: '💰 Nuestros servicios:\n\n✂️ Corte: desde $XXXX\n🎨 Coloracion: desde $XXXX\n💆 Tratamientos: desde $XXXX\n\n¿Queres mas info de algun servicio?' },
+        { label: 'Horarios 🕐', response: '🕐 Atendemos:\n\nLunes a Sabado: 09:00 - 20:00\nDomingos: cerrado\n\n¡Te esperamos!' },
+        { label: 'Donde estamos 📍', response: '📍 Nos encontras en:\n\n[Tu direccion]\n\nGoogle Maps: [link]' },
+      ]
+    },
+    {
+      id: 'tech',
+      name: '🔧 Servicio Tecnico',
+      emoji: '🔧',
+      description: 'Reparaciones, presupuestos y retiro',
+      options: [
+        { label: 'Solicitar Presupuesto 💰', response: '💰 Para darte un presupuesto, contame:\n\n• ¿Que equipo es? (marca y modelo)\n• ¿Que problema tiene?\n• ¿Hace cuanto sucede?\n\n¡Te respondemos a la brevedad!' },
+        { label: 'Retiro a Domicilio 🚗', response: '🚗 Hacemos retiro y entrega a domicilio!\n\nZona de cobertura: [tu zona]\nCosto de retiro: $XXXX (se descuenta si reparan)\n\n¿Te mandamos?' },
+        { label: 'Equipos que reparamos 🛠️', response: '🛠️ Reparamos:\n\n💻 Notebooks y PCs\n📱 Celulares y tablets\n🖨️ Impresoras\n📺 Smart TVs\n\n¿Tu equipo no esta en la lista? ¡Consulta igual!' },
+        { label: 'Horarios 🕐', response: '🕐 Horarios de atencion:\n\nLunes a Viernes: 09:00 - 18:00\nSabados: 09:00 - 13:00' },
+      ]
+    },
+    {
+      id: 'blank',
+      name: '✏️ Desde Cero',
+      emoji: '⭐',
+      description: 'Empeza con opciones vacias y personaliza todo',
+      options: [
+        { label: 'Opcion 1', response: 'Respuesta de la opcion 1...' },
+        { label: 'Opcion 2', response: 'Respuesta de la opcion 2...' },
+      ]
+    },
+  ];
+
+  const emojiOptions = ['🏪', '🍽️', '🍣', '🍕', '☕', '🏥', '💈', '🛒', '🔧', '🎓', '🏋️', '🎭', '🌺', '⭐', '💎', '🚗', '🏠', '✂️', '🐾', '📚'];
 
   if (loading) return <div className="loading-overlay"><div className="spinner" style={{ width: 40, height: 40 }}></div></div>;
   if (!config) return <div className="card"><div className="empty-state"><div className="empty-icon">⚠️</div><p>No se pudo cargar la configuracion.</p></div></div>;
@@ -150,6 +253,34 @@ export default function BotConfigPage() {
       {!isAI && (
         <div className="grid-2">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+
+            {/* Template Picker */}
+            <div className="card">
+              <h4 style={{ marginBottom: 'var(--space-sm)' }}>🎨 Elegir Plantilla</h4>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: 'var(--space-md)' }}>
+                Elige una plantilla para tu rubro y personalizala. Carga automaticamente el emoji y las opciones.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-sm)' }}>
+                {welcomeTemplates.map(tpl => (
+                  <button key={tpl.id} onClick={() => {
+                    u('business_emoji', tpl.emoji);
+                    u('static_options', tpl.options);
+                  }} style={{
+                    background: 'var(--color-bg-input)', border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-md)', padding: 'var(--space-md)', cursor: 'pointer',
+                    textAlign: 'left', transition: 'all 0.2s',
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.background = 'rgba(124,58,237,0.1)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.background = 'var(--color-bg-input)'; }}
+                  >
+                    <div style={{ fontSize: '1.4rem', marginBottom: 4 }}>{tpl.emoji}</div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: 2 }}>{tpl.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{tpl.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Branding */}
             <div className="card">
               <h4 style={{ marginBottom: 'var(--space-md)' }}>✨ Personaliza tu Bienvenida</h4>
