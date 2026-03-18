@@ -1,0 +1,25 @@
+{
+  "name": "chatbot-saas-server",
+  "version": "1.0.0",
+  "description": "WhatsApp ChatBot SaaS - Meta Cloud API + OpenAI",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "migrate": "npx knex migrate:latest --knexfile db/knexfile.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "knex": "^3.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "validator": "^13.11.0",
+    "openai": "^4.28.0",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.0"
+  }
+}
