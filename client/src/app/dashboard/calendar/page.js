@@ -112,6 +112,26 @@ export default function CalendarPage() {
     setRules(newRules);
   }
 
+  function copyToAllDays(sourceIndex) {
+    if (!window.confirm('¿Copiar este horario a todos los días hábiles (Lunes a Viernes)?')) return;
+    const sourceRule = rules[sourceIndex];
+    const newRules = rules.map(r => {
+      // Only copy active state and times to Monday-Friday
+      if (r.day_of_week > 0 && r.day_of_week < 6) {
+        return {
+          ...r,
+          is_active: true,
+          start_time: sourceRule.start_time,
+          end_time: sourceRule.end_time,
+          slot_duration_minutes: sourceRule.slot_duration_minutes
+        };
+      }
+      return r;
+    });
+    setRules(newRules);
+    showToast('Horarios copiados de Lunes a Viernes');
+  }
+
   if (loading) return <div className="loading-overlay"><div className="spinner" style={{ width: 40, height: 40 }}></div></div>;
 
   return (
@@ -186,12 +206,12 @@ export default function CalendarPage() {
           />
         </div>
       ) : (
-        <div className="card" style={{ maxWidth: 800 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-lg)' }}>
+        <div className="card" style={{ maxWidth: 850 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-lg)' }}>
             <div>
               <h3>Configurar Días y Horarios</h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginTop: 4 }}>
-                Define cuando el bot puede agendar turnos y cuanto dura cada uno.
+                Define cuando el bot puede agendar turnos y cuánto dura cada uno. Es súper simple: prendé los días que trabajás.
               </p>
             </div>
             <button className="btn btn-primary" onClick={saveRules} disabled={saving}>
@@ -199,65 +219,89 @@ export default function CalendarPage() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          <style dangerouslySetInnerHTML={{__html:`
+            .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+            .toggle-switch input { opacity: 0; width: 0; height: 0; }
+            .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .3s; border-radius: 24px; }
+            .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+            input:checked + .toggle-slider { background-color: var(--color-primary); }
+            input:checked + .toggle-slider:before { transform: translateX(20px); }
+          `}} />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
             {rules.map((rule, idx) => (
               <div key={idx} style={{ 
-                display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto auto 140px', 
+                display: 'grid', gridTemplateColumns: '140px 1fr', 
                 gap: 'var(--space-md)', alignItems: 'center', 
                 background: 'var(--color-bg-input)', padding: 'var(--space-md)', 
                 borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)',
-                opacity: rule.is_active ? 1 : 0.6, transition: 'opacity 0.2s'
+                borderLeft: rule.is_active ? '4px solid var(--color-primary)' : '4px solid transparent',
+                transition: 'all 0.2s'
               }}>
-                <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', margin: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                  <label className="toggle-switch">
                     <input 
                       type="checkbox" 
                       checked={rule.is_active} 
                       onChange={e => updateRule(idx, 'is_active', e.target.checked)} 
-                      style={{ width: 18, height: 18, accentColor: 'var(--color-primary)' }}
                     />
-                    <strong style={{ fontSize: '1.05rem' }}>{daysLabels[rule.day_of_week]}</strong>
+                    <span className="toggle-slider"></span>
                   </label>
+                  <strong style={{ fontSize: '1rem', color: rule.is_active ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}>
+                    {daysLabels[rule.day_of_week]}
+                  </strong>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>De</span>
-                  <input 
-                    type="time" 
-                    className="input-field" 
-                    value={rule.start_time.slice(0,5)} 
-                    onChange={e => updateRule(idx, 'start_time', e.target.value + ':00')}
-                    disabled={!rule.is_active}
-                    style={{ padding: '6px 10px' }}
-                  />
-                </div>
+                {rule.is_active ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto 1fr', gap: 'var(--space-lg)', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>De</span>
+                      <input 
+                        type="time" 
+                        className="input-field" 
+                        value={rule.start_time.slice(0,5)} 
+                        onChange={e => updateRule(idx, 'start_time', e.target.value + ':00')}
+                        style={{ padding: '6px 10px', width: 110 }}
+                      />
+                    </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>A</span>
-                  <input 
-                    type="time" 
-                    className="input-field" 
-                    value={rule.end_time.slice(0,5)} 
-                    onChange={e => updateRule(idx, 'end_time', e.target.value + ':00')}
-                    disabled={!rule.is_active}
-                    style={{ padding: '6px 10px' }}
-                  />
-                </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>A</span>
+                      <input 
+                        type="time" 
+                        className="input-field" 
+                        value={rule.end_time.slice(0,5)} 
+                        onChange={e => updateRule(idx, 'end_time', e.target.value + ':00')}
+                        style={{ padding: '6px 10px', width: 110 }}
+                      />
+                    </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Duración (min)</span>
-                    <input 
-                      type="number" 
-                      className="input-field" 
-                      value={rule.slot_duration_minutes} 
-                      onChange={e => updateRule(idx, 'slot_duration_minutes', parseInt(e.target.value))}
-                      disabled={!rule.is_active}
-                      min={10} max={240} step={10}
-                      style={{ padding: '6px 10px' }}
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Turnos de</span>
+                      <div style={{ position: 'relative' }}>
+                        <input 
+                          type="number" 
+                          className="input-field" 
+                          value={rule.slot_duration_minutes} 
+                          onChange={e => updateRule(idx, 'slot_duration_minutes', parseInt(e.target.value))}
+                          min={10} max={240} step={10}
+                          style={{ padding: '6px 10px', width: 80, paddingRight: 35 }}
+                        />
+                        <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>min</span>
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: 'right' }}>
+                      <button className="btn btn-secondary btn-sm" onClick={() => copyToAllDays(idx)} title="Copiar este horario a Lunes a Viernes" style={{ padding: '4px 8px', fontSize: '0.75rem' }}>
+                        Copiar a todos
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', fontStyle: 'italic', paddingLeft: 'var(--space-md)' }}>
+                    Cerrado
+                  </div>
+                )}
               </div>
             ))}
           </div>
