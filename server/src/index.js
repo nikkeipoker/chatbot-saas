@@ -4,6 +4,7 @@ const security = require('./middleware/security');
 const authRoutes = require('./routes/authRoutes');
 const tenantRoutes = require('./routes/tenantRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const { authenticate } = require('./middleware/auth');
 
@@ -29,6 +30,7 @@ app.use('/api/', security.apiLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/tenant', tenantRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/appointments', appointmentRoutes);
 app.use('/webhook', webhookRoutes);
 
 // --- Health Check ---
