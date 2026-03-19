@@ -18,7 +18,18 @@ async function handleMessage(tenantId, customerPhone, messageText, messageId) {
     if (tenant.subscription_status === 'trial' && new Date(tenant.trial_ends_at) < new Date()) return;
 
     const config = await db('bot_config').where('tenant_id', tenantId).first();
-    if (!config || !config.bot_active) return;
+    if (!config) {
+      console.warn(`[Bot] [${tenant.name}] No config found for tenant ${tenantId}`);
+      return;
+    }
+    
+    if (!config.bot_active) {
+      console.log(`[Bot] [${tenant.name}] Bot is inactive`);
+      return;
+    }
+
+    // Diagnostic logging
+    console.log(`[Bot] [${tenant.name}] Processing message from ${customerPhone}. Mode: ${config.bot_mode}`);
 
     // Mark as read
     await metaService.markAsRead(tenant.meta_phone_number_id, tenant.meta_access_token, messageId);
@@ -39,10 +50,10 @@ async function handleMessage(tenantId, customerPhone, messageText, messageId) {
     }
 
     await updateConversation(tenantId, customerPhone, messageText, responseText);
-    console.log(`[Bot] [${tenant.name}] [${config.bot_mode}] ${customerPhone}`);
+    console.log(`[Bot] [${tenant.name}] Response sent to ${customerPhone}`);
 
   } catch (error) {
-    console.error(`[Bot] Error tenant ${tenantId}:`, error.message);
+    console.error(`[Bot] CRITICAL Error tenant ${tenantId}:`, error.message);
   }
 }
 
@@ -72,7 +83,11 @@ async function handleStaticMode(messageText, config, tenantName, tenantId, custo
     return selectedResponse || config.default_response || 'Gracias por tu mensaje.';
   }
 
-  // Any other message → show personalized welcome with options menu
+  // Any other message → show welcome message from config or generate default
+  if (config.welcome_message) {
+    return config.welcome_message;
+  }
+
   let welcome = `${emoji} *¡Hola! Bienvenido a ${tenantName}* ${emoji}\n\n`;
   welcome += '¿En qué podemos ayudarte? Respondé con un número:\n\n';
 

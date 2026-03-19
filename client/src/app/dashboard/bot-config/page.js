@@ -36,6 +36,7 @@ export default function BotConfigPage() {
         business_emoji: config.business_emoji,
         static_options: config.static_options,
         default_response: config.default_response,
+        welcome_message: config.welcome_message,
         system_prompt: config.system_prompt,
         ai_model: config.ai_model,
         max_tokens: config.max_tokens,
@@ -200,6 +201,7 @@ export default function BotConfigPage() {
 
   // Build preview welcome message
   const previewWelcome = () => {
+    if (config.welcome_message) return config.welcome_message;
     const emoji = config.business_emoji || '🏪';
     let msg = `${emoji} *¡Hola! Bienvenido a ${tenantName}* ${emoji}\n\n¿En qué podemos ayudarte? Respondé con un número:\n\n`;
     (config.static_options || []).forEach((opt, i) => {
@@ -286,6 +288,13 @@ export default function BotConfigPage() {
             <div className="card">
               <h4 style={{ marginBottom: 'var(--space-md)' }}>✨ Personaliza tu Bienvenida</h4>
               <div className="input-group" style={{ marginBottom: 'var(--space-md)' }}>
+                <label>Mensaje de bienvenida (opcional)</label>
+                <textarea className="input-field" value={config.welcome_message || ''} onChange={e => u('welcome_message', e.target.value)} rows={4} placeholder="Escribe tu mensaje o déjalo vacío para usar el menú automático..." />
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
+                  Si lo dejas vacío, el bot generará automáticamente: "{config.business_emoji} ¡Hola! Bienvenido a {tenantName}..." seguido de la lista de opciones.
+                </p>
+              </div>
+              <div className="input-group">
                 <label>Emoji de tu negocio</label>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   {emojiOptions.map(e => (
@@ -298,9 +307,6 @@ export default function BotConfigPage() {
                   ))}
                 </div>
               </div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                El nombre de tu negocio se toma de tu perfil en Configuracion.
-              </p>
             </div>
 
             {/* Dynamic Options */}
