@@ -39,7 +39,8 @@ export default function BotConfigPage() {
         system_prompt: config.system_prompt,
         ai_model: config.ai_model,
         max_tokens: config.max_tokens,
-        temperature: config.temperature
+        temperature: config.temperature,
+        booking_url: config.booking_url
       };
       if (newKey) body.openai_api_key = newKey;
 
@@ -332,16 +333,16 @@ export default function BotConfigPage() {
                       <label style={{ margin: 0 }}>Respuesta cuando eligen esta opcion</label>
                       {opt.response !== '__FLOW_BOOKING__' ? (
                         <button className="btn btn-secondary btn-sm" onClick={() => updateOption(i, 'response', '__FLOW_BOOKING__')} style={{ fontSize: '0.7rem', padding: '2px 6px' }}>
-                          📅 Usar Flujo de Reservas Inteligente
+                          📅 Usar Link de Reservas
                         </button>
                       ) : (
-                        <span className="badge badge-active" style={{ fontSize: '0.7rem' }}>Flujo de Reservas Activado</span>
+                        <span className="badge badge-active" style={{ fontSize: '0.7rem' }}>Link de Reservas Activado</span>
                       )}
                     </div>
                     {opt.response === '__FLOW_BOOKING__' ? (
                       <div style={{ padding: 'var(--space-md)', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 'var(--radius-sm)', color: 'var(--color-primary-light)', fontSize: '0.85rem' }}>
-                        <strong>✨ Flujo de Reservas Interactivo:</strong><br/>
-                        Al seleccionar esta opcion, el bot enviará los horarios disponibles de esta semana y guiará al cliente paso a paso para agendar su turno automáticamente en el calendario.
+                        <strong>✨ Enlace de Reservas Automático:</strong><br/>
+                        Al seleccionar esta opcion, el bot enviará el enlace de agendamiento (Calendly/Cal.com) configurado más abajo.
                       </div>
                     ) : (
                       <textarea className="input-field" value={opt.response} onChange={e => updateOption(i, 'response', e.target.value)} rows={3} style={{ width: '100%' }} placeholder="Lo que el bot responde..." />
@@ -349,6 +350,13 @@ export default function BotConfigPage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Booking URL */}
+            <div className="card">
+              <h4 style={{ marginBottom: 'var(--space-sm)' }}>📅 Link de Agendamiento / Turnos</h4>
+              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 'var(--space-sm)' }}>Pega aquí tu enlace de Calendly, Cal.com o similar. El bot se lo enviará a los clientes cuando soliciten agendar un turno.</p>
+              <input type="url" className="input-field" value={config.booking_url || ''} onChange={e => u('booking_url', e.target.value)} placeholder="https://calendly.com/tu-negocio" style={{ width: '100%' }} />
             </div>
 
             {/* Default Response */}

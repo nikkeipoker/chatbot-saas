@@ -64,7 +64,8 @@ router.put('/bot-config', async (req, res) => {
       // AI fields
       system_prompt, ai_model, max_tokens, temperature,
       // Static fields
-      static_options, default_response
+      static_options, default_response,
+      booking_url
     } = req.body;
 
     const updates = {};
@@ -78,6 +79,7 @@ router.put('/bot-config', async (req, res) => {
     if (temperature !== undefined) updates.temperature = temperature;
     if (static_options !== undefined) updates.static_options = JSON.stringify(static_options);
     if (default_response !== undefined) updates.default_response = default_response;
+    if (booking_url !== undefined) updates.booking_url = booking_url;
 
     const [config] = await db('bot_config')
       .where('tenant_id', req.tenant.id)
