@@ -27,7 +27,6 @@ export default function DashboardLayout({ children }) {
     { href:'/dashboard', icon:'📊', label:'Dashboard' },
     { href:'/dashboard/conversations', icon:'💬', label:'Conversaciones' },
     { href:'/dashboard/bot-config', icon:'🤖', label:'Configurar Bot' },
-    { href:'/dashboard/calendar', icon:'📅', label:'Turnos / Reservas' },
     { href:'/dashboard/settings', icon:'⚙️', label:'Configuracion' },
     ...(user?.is_super_admin ? [{ href:'/dashboard/admin', icon:'🛡️', label:'Administracion' }] : []),
   ];
