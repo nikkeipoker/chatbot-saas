@@ -63,86 +63,131 @@ export default function SettingsPage() {
     : '/webhook';
 
   return (
-    <>
+    <div className="animate-fade">
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
-      <div className="page-header"><h1>Configuracion</h1><p>Administra tu cuenta y conexiones</p></div>
-
-      <div style={{display:'flex',flexDirection:'column',gap:'var(--space-lg)',maxWidth:700}}>
-        {/* Profile */}
-        <div className="card">
-          <h3 style={{marginBottom:'var(--space-lg)'}}>🏪 Perfil del Negocio</h3>
-          <div className="auth-form">
-            <div className="input-group"><label>Nombre del negocio</label><input className="input-field" value={profile.name} onChange={e=>setProfile(p=>({...p,name:e.target.value}))} /></div>
-            <div className="input-group"><label>Telefono de contacto</label><input className="input-field" value={profile.phone_number} onChange={e=>setProfile(p=>({...p,phone_number:e.target.value}))} placeholder="+54 11 1234-5678" /></div>
-            <button className="btn btn-primary" onClick={saveProfile} disabled={saving.profile}>{saving.profile?'Guardando...':'Guardar Perfil'}</button>
-          </div>
-        </div>
-
-        {/* Subscription */}
-        <div className="card">
-          <h3 style={{marginBottom:'var(--space-md)'}}>💎 Suscripcion</h3>
-          <span className={`badge badge-${tenant?.subscription_status==='active'?'active':'trial'}`}>
-            {tenant?.subscription_status==='trial'?'Prueba Gratuita':tenant?.subscription_status==='active'?'Activa':'Suspendida'}
-          </span>
-          {tenant?.trial_ends_at && tenant.subscription_status==='trial' && (
-            <span style={{fontSize:'0.85rem',color:'var(--color-text-muted)',marginLeft:12}}>
-              Vence: {new Date(tenant.trial_ends_at).toLocaleDateString('es-AR')}
-            </span>
-          )}
-        </div>
-
-        {/* Meta WhatsApp */}
-        <div className="card">
-          <h3 style={{marginBottom:'var(--space-sm)'}}>📱 WhatsApp (Meta Cloud API)</h3>
-          <p style={{color:'var(--color-text-muted)',fontSize:'0.85rem',marginBottom:'var(--space-lg)'}}>
-            Conecta tu numero de WhatsApp Business. Obtene estas credenciales desde{' '}
-            <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer">developers.facebook.com</a> → Tu App → WhatsApp → API Setup.
-          </p>
-          <div className="auth-form">
-            <div className="input-group">
-              <label>Phone Number ID</label>
-              <input className="input-field" value={meta.meta_phone_number_id} onChange={e=>setMeta(m=>({...m,meta_phone_number_id:e.target.value}))} placeholder="123456789012345" />
-            </div>
-            <div className="input-group">
-              <label>Access Token (Permanente)</label>
-              <input className="input-field" type="password" value={meta.meta_access_token} onChange={e=>setMeta(m=>({...m,meta_access_token:e.target.value}))} placeholder="EAAxxxxxxxx..." />
-            </div>
-            <div className="input-group">
-              <label>WhatsApp Business Account ID (Opcional)</label>
-              <input className="input-field" value={meta.meta_waba_id} onChange={e=>setMeta(m=>({...m,meta_waba_id:e.target.value}))} placeholder="123456789012345" />
-            </div>
-            <button className="btn btn-primary" onClick={saveMeta} disabled={saving.meta}>{saving.meta?'Guardando...':'Guardar Credenciales'}</button>
-          </div>
-        </div>
-
-        {/* Webhook URL */}
-        <div className="card">
-          <h3 style={{marginBottom:'var(--space-sm)'}}>🔗 Webhook URL</h3>
-          <p style={{color:'var(--color-text-muted)',fontSize:'0.85rem',marginBottom:'var(--space-sm)'}}>
-            Configura esta URL en Meta → Tu App → WhatsApp → Configuration → Callback URL:
-          </p>
-          <div style={{background:'var(--color-bg-input)',padding:'12px 16px',borderRadius:'var(--radius-md)',fontFamily:'var(--font-mono)',fontSize:'0.9rem',wordBreak:'break-all',border:'1px solid var(--color-border)'}}>
-            {webhookUrl}
-          </div>
-          <p style={{color:'var(--color-text-muted)',fontSize:'0.8rem',marginTop:'var(--space-sm)'}}>
-            <strong>Verify Token:</strong> El mismo que configuraste en tu variable de entorno <code style={{background:'var(--color-bg-input)',padding:'2px 6px',borderRadius:4}}>META_VERIFY_TOKEN</code>
-          </p>
-        </div>
-
-        {/* Setup Guide */}
-        <div className="card">
-          <h3 style={{marginBottom:'var(--space-md)'}}>📖 Guia de Configuracion de Meta</h3>
-          <ol style={{fontSize:'0.9rem',color:'var(--color-text-secondary)',paddingLeft:20,display:'flex',flexDirection:'column',gap:8}}>
-            <li>Ve a <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer">developers.facebook.com</a></li>
-            <li>Crea una app y selecciona &quot;Business&quot;</li>
-            <li>Agrega el producto &quot;WhatsApp&quot;</li>
-            <li>En &quot;API Setup&quot; encontras tu Phone Number ID y Access Token</li>
-            <li>En &quot;Configuration&quot;, pega tu Webhook URL y Verify Token</li>
-            <li>Suscribete al campo &quot;messages&quot;</li>
-            <li>Listo! Tu bot empieza a responder</li>
-          </ol>
+      
+      <div className="flex justify-between items-center" style={{ marginBottom: 40 }}>
+        <div>
+          <h1 className="page-title">Configuración del Sistema</h1>
+          <p style={{ color: 'var(--color-text-dim)' }}>Administra tu perfil, suscripción y conexiones externas.</p>
         </div>
       </div>
-    </>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 350px', gap: 32, alignItems: 'start' }}>
+        
+        {/* LEFT COLUMN: SETTINGS */}
+        <div className="flex" style={{ flexDirection: 'column', gap: 32 }}>
+          
+          {/* BUSINESS PROFILE */}
+          <div className="glass-card">
+            <h3 style={{ marginBottom: 24, fontSize: '1.2rem' }}>🏪 Perfil del Negocio</h3>
+            <div className="flex" style={{ flexDirection: 'column', gap: 20 }}>
+               <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-mute)', textTransform: 'uppercase', marginBottom: 8 }}>Nombre Comercial</label>
+                  <input className="input-premium" value={profile.name} onChange={e=>setProfile(p=>({...p,name:e.target.value}))} placeholder="Ej: Sushi Zen" />
+               </div>
+               <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-mute)', textTransform: 'uppercase', marginBottom: 8 }}>WhatsApp de Contacto (Público)</label>
+                  <input className="input-premium" value={profile.phone_number} onChange={e=>setProfile(p=>({...p,phone_number:e.target.value}))} placeholder="+54 11 1234-5678" />
+               </div>
+               <div style={{ marginTop: 8 }}>
+                  <button className="btn-premium btn-p-primary" onClick={saveProfile} disabled={saving.profile}>
+                     {saving.profile ? '⌛ Guardando...' : '💾 Guardar Cambios'}
+                  </button>
+               </div>
+            </div>
+          </div>
+
+          {/* META WHATSAPP CONFIG */}
+          <div className="glass-card">
+            <h3 style={{ marginBottom: 12, fontSize: '1.2rem' }}>📱 WhatsApp Business API</h3>
+            <p style={{ color: 'var(--color-text-dim)', fontSize: '0.85rem', marginBottom: 24 }}>
+               Conecta tu número oficial a través de Meta Cloud API para automatizar respuestas.
+            </p>
+            
+            <div className="flex" style={{ flexDirection: 'column', gap: 20 }}>
+               <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-mute)', textTransform: 'uppercase', marginBottom: 8 }}>Phone Number ID</label>
+                  <input className="input-premium" value={meta.meta_phone_number_id} onChange={e=>setMeta(m=>({...m,meta_phone_number_id:e.target.value}))} placeholder="ID de 15 dígitos..." />
+               </div>
+               <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-mute)', textTransform: 'uppercase', marginBottom: 8 }}>Access Token (Permanente)</label>
+                  <input className="input-premium" type="password" value={meta.meta_access_token} onChange={e=>setMeta(m=>({...m,meta_access_token:e.target.value}))} placeholder="EAAB..." />
+               </div>
+               <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-mute)', textTransform: 'uppercase', marginBottom: 8 }}>WABA Account ID</label>
+                  <input className="input-premium" value={meta.meta_waba_id} onChange={e=>setMeta(m=>({...m,meta_waba_id:e.target.value}))} placeholder="ID de la cuenta business..." />
+               </div>
+               <div style={{ marginTop: 8 }}>
+                  <button className="btn-premium btn-p-primary" onClick={saveMeta} disabled={saving.meta}>
+                     {saving.meta ? '⌛ Conectando...' : '🔗 Vincular WhatsApp'}
+                  </button>
+               </div>
+            </div>
+          </div>
+
+          {/* WEBHOOK DETAILS */}
+          <div className="glass-card" style={{ border: '1px dashed rgba(124,58,237,0.3)' }}>
+            <h3 style={{ marginBottom: 12, fontSize: '1rem' }}>🔗 Callback URL (Webhook)</h3>
+            <p style={{ color: 'var(--color-text-dim)', fontSize: '0.8rem', marginBottom: 16 }}>
+               Copia esta URL en el panel de desarrolladores de Meta para recibir los mensajes.
+            </p>
+            <div className="flex gap-md">
+               <div style={{ flex: 1, background: 'rgba(0,0,0,0.2)', padding: '12px 16px', borderRadius: 'var(--radius-md)', fontFamily: 'monospace', fontSize: '0.85rem', border: '1px solid rgba(255,255,255,0.05)', color: 'var(--color-primary-light)' }}>
+                  {webhookUrl}
+               </div>
+               <button className="btn-premium" style={{ background: 'rgba(255,255,255,0.05)', fontSize: '0.75rem' }} onClick={() => {
+                  navigator.clipboard.writeText(webhookUrl);
+                  showToast('URL Copiada', 'success');
+               }}>📋 Copiar</button>
+            </div>
+            <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(124,58,237,0.05)', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', color: 'var(--color-text-dim)' }}>
+               <strong>Verify Token:</strong> Utiliza el token definido en tu configuración de servidor.
+            </div>
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN: STATUS & HELP */}
+        <div style={{ position: 'sticky', top: 40 }} className="flex flex-col gap-lg">
+           
+           {/* SUBSCRIPTION STATUS */}
+           <div className="glass-card" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,0,0,0))' }}>
+              <div className="flex justify-between items-start" style={{ marginBottom: 16 }}>
+                 <h4 style={{ fontSize: '0.85rem', color: 'var(--color-text-mute)', textTransform: 'uppercase' }}>Suscripción</h4>
+                 <div style={{ fontSize: '1.5rem' }}>💎</div>
+              </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8, color: '#fff' }}>
+                 {tenant?.subscription_status === 'trial' ? 'Prueba Gratis' : 'Plan Premium'}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--color-text-dim)', marginBottom: 20 }}>
+                 {tenant?.subscription_status === 'trial' ? `Vence el ${new Date(tenant.trial_ends_at).toLocaleDateString()}` : 'Renovación mensual activa'}
+              </div>
+              <button className="btn-premium" style={{ width: '100%', border: '1px solid var(--color-primary)', background: 'transparent' }}>Gestionar Plan</button>
+           </div>
+
+           {/* QUICK SETUP GUIDE */}
+           <div className="glass-card">
+              <h4 style={{ fontSize: '1rem', marginBottom: 16 }}>Guía de Conexión</h4>
+              <div className="flex flex-col gap-md">
+                 {[
+                    { n: 1, t: 'Crea tu App en Meta Developers' },
+                    { n: 2, t: 'Agrega el producto WhatsApp' },
+                    { n: 3, t: 'Copia el Phone ID y Token mensual' },
+                    { n: 4, t: 'Configura el Callback URL arriba' },
+                    { n: 5, t: 'Suscríbete al campo message' }
+                 ].map(s => (
+                    <div key={s.n} className="flex gap-md items-center">
+                       <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-primary-light)' }}>{s.n}</div>
+                       <div style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>{s.t}</div>
+                    </div>
+                 ))}
+              </div>
+           </div>
+
+        </div>
+
+      </div>
+    </div>
   );
 }

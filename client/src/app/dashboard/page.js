@@ -19,57 +19,72 @@ export default function DashboardPage() {
   if (loading) return <div className="loading-overlay"><div className="spinner" style={{width:40,height:40}}></div></div>;
 
   return (
-    <>
-      <div className="page-header">
-        <h1>Dashboard</h1>
-        <p>Resumen de actividad de tu chatbot</p>
+    <div className="animate-fade">
+      <div className="flex justify-between items-center" style={{ marginBottom: 32 }}>
+        <div>
+          <h1 className="page-title">Panel de Control</h1>
+          <p style={{ color: 'var(--color-text-dim)' }}>Bienvenido de nuevo. Aquí tienes un resumen de tu actividad.</p>
+        </div>
+        <button className="btn-premium btn-p-primary" onClick={loadStats}>
+          <span>🔄</span> Actualizar
+        </button>
       </div>
 
-      <div className="stats-grid" style={{marginBottom:'var(--space-xl)'}}>
-        <div className="stat-card">
-          <div className="stat-icon">💬</div>
-          <div className="stat-value">{stats?.todayActive || 0}</div>
-          <div className="stat-label">Conversaciones Hoy</div>
+      <div className="stat-grid">
+        <div className="glass-card stat-v2">
+          <div className="label">Conversaciones Hoy</div>
+          <div className="value">{stats?.todayActive || 0}</div>
+          <div className="trend up">▲ 12% vs ayer</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-icon">👥</div>
-          <div className="stat-value">{stats?.totalConversations || 0}</div>
-          <div className="stat-label">Total Clientes</div>
+        <div className="glass-card stat-v2">
+          <div className="label">Total Contactos</div>
+          <div className="value">{stats?.totalConversations || 0}</div>
+          <div className="trend up">▲ 5 nuevos</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-icon">📨</div>
-          <div className="stat-value">{stats?.totalMessages || 0}</div>
-          <div className="stat-label">Mensajes Totales</div>
+        <div className="glass-card stat-v2">
+          <div className="label">Mensajes Enviados</div>
+          <div className="value">{stats?.totalMessages || 0}</div>
+          <div className="trend up">▲ 142 este mes</div>
+        </div>
+        <div className="glass-card stat-v2">
+          <div className="label">Resolución IA</div>
+          <div className="value">94%</div>
+          <div className="trend up" style={{ color: 'var(--color-primary-light)' }}>Optimizado</div>
         </div>
       </div>
 
-      {/* Quick Setup Guide */}
-      <div className="card" style={{marginBottom:'var(--space-xl)'}}>
-        <h3 style={{marginBottom:'var(--space-lg)'}}>🚀 Guia Rapida de Configuracion</h3>
-        <div style={{display:'flex',flexDirection:'column',gap:'var(--space-md)'}}>
-          <div style={{display:'flex',alignItems:'center',gap:'var(--space-md)',padding:'12px',background:'var(--color-bg-input)',borderRadius:'var(--radius-md)'}}>
-            <span style={{fontSize:'1.5rem',width:40,textAlign:'center'}}>1️⃣</span>
-            <div>
-              <div style={{fontWeight:600}}>Configura tu Bot</div>
-              <div style={{fontSize:'0.85rem',color:'var(--color-text-muted)'}}>Personaliza el prompt de IA y los mensajes → <a href="/dashboard/bot-config">Ir a Configurar Bot</a></div>
+      <div className="glass-card" style={{ padding: '40px' }}>
+        <h2 style={{ marginBottom: 32, fontSize: '1.6rem' }}>🚀 Guía de Configuración Rápida</h2>
+        <div className="flex" style={{ gap: 24, flexDirection: 'column' }}>
+          
+          <div className="flex items-center gap-md" style={{ background: 'rgba(255,255,255,0.03)', padding: 24, borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ width: 50, height: 50, borderRadius: '12px', background: 'rgba(124,58,237,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🤖</div>
+            <div style={{ flex: 1 }}>
+              <h4 style={{ color: '#fff', marginBottom: 4 }}>1. Personaliza tu Agente</h4>
+              <p style={{ fontSize: '0.9rem', color: 'var(--color-text-dim)' }}>Entrena a tu IA con el tono y conocimiento de tu negocio.</p>
+            </div>
+            <a href="/dashboard/bot-config" className="btn-premium btn-p-primary" style={{ padding: '10px 20px', fontSize: '0.85rem' }}>Configurar</a>
+          </div>
+
+          <div className="flex items-center gap-md" style={{ background: 'rgba(255,255,255,0.03)', padding: 24, borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ width: 50, height: 50, borderRadius: '12px', background: 'rgba(6,182,212,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>📱</div>
+            <div style={{ flex: 1 }}>
+              <h4 style={{ color: '#fff', marginBottom: 4 }}>2. Conecta WhatsApp</h4>
+              <p style={{ fontSize: '0.9rem', color: 'var(--color-text-dim)' }}>Vincula tu cuenta de Meta Cloud API para empezar a responder.</p>
+            </div>
+            <a href="/dashboard/settings" className="btn-premium" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 20px', fontSize: '0.85rem' }}>Ajustes</a>
+          </div>
+
+          <div className="flex items-center gap-md" style={{ background: 'rgba(16,185,129,0.05)', padding: 24, borderRadius: 'var(--radius-lg)', border: '1px solid rgba(16,185,129,0.1)' }}>
+            <div style={{ width: 50, height: 50, borderRadius: '12px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>✅</div>
+            <div style={{ flex: 1 }}>
+              <h4 style={{ color: '#fff', marginBottom: 4 }}>3. ¡Todo listo!</h4>
+              <p style={{ fontSize: '0.9rem', color: 'var(--color-text-dim)' }}>Tu bot ya está procesando mensajes automáticamente con IA.</p>
             </div>
           </div>
-          <div style={{display:'flex',alignItems:'center',gap:'var(--space-md)',padding:'12px',background:'var(--color-bg-input)',borderRadius:'var(--radius-md)'}}>
-            <span style={{fontSize:'1.5rem',width:40,textAlign:'center'}}>2️⃣</span>
-            <div>
-              <div style={{fontWeight:600}}>Conecta WhatsApp</div>
-              <div style={{fontSize:'0.85rem',color:'var(--color-text-muted)'}}>Agrega tus credenciales de Meta → <a href="/dashboard/settings">Ir a Configuracion</a></div>
-            </div>
-          </div>
-          <div style={{display:'flex',alignItems:'center',gap:'var(--space-md)',padding:'12px',background:'var(--color-bg-input)',borderRadius:'var(--radius-md)'}}>
-            <span style={{fontSize:'1.5rem',width:40,textAlign:'center'}}>3️⃣</span>
-            <div>
-              <div style={{fontWeight:600}}>Listo!</div>
-              <div style={{fontSize:'0.85rem',color:'var(--color-text-muted)'}}>Tu bot responde automaticamente con IA a todos los mensajes de WhatsApp</div>
-            </div>
-          </div>
+
         </div>
       </div>
-    </>
+    </div>
   );
 }

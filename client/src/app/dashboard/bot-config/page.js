@@ -211,257 +211,219 @@ export default function BotConfigPage() {
   };
 
   return (
-    <>
+    <div className="animate-fade">
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
 
-      <div className="page-header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div><h1>Configurar Bot</h1><p>Elige como quieres que responda tu chatbot</p></div>
-          <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center' }}>
-            <button className={`btn ${config.bot_active ? 'btn-success' : 'btn-secondary'} btn-sm`} onClick={() => u('bot_active', !config.bot_active)}>
-              {config.bot_active ? '🟢 Activo' : '🔴 Inactivo'}
-            </button>
-            <button className="btn btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Guardando...' : '💾 Guardar'}</button>
+      <div className="flex justify-between items-center" style={{ marginBottom: 40 }}>
+        <div>
+          <h1 className="page-title">Configuración del Agente</h1>
+          <p style={{ color: 'var(--color-text-dim)' }}>Define el comportamiento y personalidad de tu chatbot.</p>
+        </div>
+        <div className="flex items-center gap-md">
+          <div className="flex items-center gap-md" style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 16px', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
+             <div style={{ width: 10, height: 10, borderRadius: '50%', background: config.bot_active ? '#10B981' : '#EF4444', boxShadow: config.bot_active ? '0 0 10px #10B981' : 'none' }}></div>
+             <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{config.bot_active ? 'Bot en Línea' : 'Bot Desactivado'}</span>
+             <button onClick={() => u('bot_active', !config.bot_active)} style={{ background: 'none', border: 'none', color: 'var(--color-primary-light)', cursor: 'pointer', fontSize: '0.75rem', textDecoration: 'underline' }}>
+               {config.bot_active ? 'Pausar' : 'Activar'}
+             </button>
           </div>
+          <button className="btn-premium btn-p-primary" onClick={handleSave} disabled={saving}>
+            <span>{saving ? '⌛' : '💾'}</span> {saving ? 'Guardando...' : 'Guardar Cambios'}
+          </button>
         </div>
       </div>
 
-      {/* MODE SELECTOR */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-lg)', marginBottom: 'var(--space-xl)' }}>
-        <div className="card" onClick={() => u('bot_mode', 'static')} style={{
-          cursor: 'pointer', borderColor: !isAI ? 'var(--color-primary)' : 'var(--color-border)',
-          boxShadow: !isAI ? 'var(--shadow-glow)' : 'none', position: 'relative', overflow: 'hidden'
-        }}>
-          {!isAI && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))' }} />}
-          <div style={{ fontSize: '2rem', marginBottom: 'var(--space-sm)' }}>📋</div>
-          <h3>Respuestas Preprogramadas</h3>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 'var(--space-xs)' }}>
-            Bienvenida personalizada + hasta 5 opciones con respuestas que vos configuras.
+      {/* MODE SELECTOR V2 */}
+      <div className="flex gap-md" style={{ marginBottom: 48 }}>
+        <div 
+          className="glass-card" 
+          onClick={() => u('bot_mode', 'static')} 
+          style={{ 
+            flex: 1, cursor: 'pointer', 
+            borderColor: !isAI ? 'var(--color-primary)' : 'rgba(255,255,255,0.1)',
+            background: !isAI ? 'rgba(124,58,237,0.05)' : 'var(--color-bg-card)',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+        >
+          <div className="flex items-center gap-md" style={{ marginBottom: 16 }}>
+             <div style={{ fontSize: '2rem' }}>📋</div>
+             <h3 style={{ fontSize: '1.25rem' }}>Flujo Estático</h3>
+          </div>
+          <p style={{ color: 'var(--color-text-dim)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+            Ideal para menús de opciones fijas. Control total sobre cada respuesta y derivación.
           </p>
         </div>
-        <div className="card" onClick={() => u('bot_mode', 'ai')} style={{
-          cursor: 'pointer', borderColor: isAI ? 'var(--color-primary)' : 'var(--color-border)',
-          boxShadow: isAI ? 'var(--shadow-glow)' : 'none', position: 'relative', overflow: 'hidden'
-        }}>
-          {isAI && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))' }} />}
-          <div style={{ fontSize: '2rem', marginBottom: 'var(--space-sm)' }}>🧠</div>
-          <h3>Inteligencia Artificial</h3>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 'var(--space-xs)' }}>
-            Respuestas inteligentes con IA. Requiere tu propia API Key de OpenAI.
+
+        <div 
+          className="glass-card" 
+          onClick={() => u('bot_mode', 'ai')} 
+          style={{ 
+            flex: 1, cursor: 'pointer', 
+            borderColor: isAI ? 'var(--color-primary)' : 'rgba(255,255,255,0.1)',
+            background: isAI ? 'rgba(124,58,237,0.05)' : 'var(--color-bg-card)',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+        >
+          <div className="flex items-center gap-md" style={{ marginBottom: 16 }}>
+             <div style={{ fontSize: '2rem' }}>🧠</div>
+             <h3 style={{ fontSize: '1.25rem' }}>IA Inteligente</h3>
+          </div>
+          <p style={{ color: 'var(--color-text-dim)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+            Respuestas naturales y dinámicas usando GPT-4. Entiende el contexto y resuelve dudas complejas.
           </p>
         </div>
       </div>
 
-      {/* ========== STATIC MODE ========== */}
-      {!isAI && (
-        <div className="grid-2">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-
-            {/* Template Picker */}
-            <div className="card">
-              <h4 style={{ marginBottom: 'var(--space-sm)' }}>🎨 Elegir Plantilla</h4>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: 'var(--space-md)' }}>
-                Elige una plantilla para tu rubro y personalizala. Carga automaticamente el emoji y las opciones.
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-sm)' }}>
-                {welcomeTemplates.map(tpl => (
-                  <button key={tpl.id} onClick={() => {
-                    u('business_emoji', tpl.emoji);
-                    u('static_options', tpl.options);
-                  }} style={{
-                    background: 'var(--color-bg-input)', border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-md)', padding: 'var(--space-md)', cursor: 'pointer',
-                    textAlign: 'left', transition: 'all 0.2s',
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.background = 'rgba(124,58,237,0.1)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.background = 'var(--color-bg-input)'; }}
-                  >
-                    <div style={{ fontSize: '1.4rem', marginBottom: 4 }}>{tpl.emoji}</div>
-                    <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: 2 }}>{tpl.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{tpl.description}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Branding */}
-            <div className="card">
-              <h4 style={{ marginBottom: 'var(--space-md)' }}>✨ Personaliza tu Bienvenida</h4>
-              <div className="input-group" style={{ marginBottom: 'var(--space-md)' }}>
-                <label>Mensaje de bienvenida (opcional)</label>
-                <textarea className="input-field" value={config.welcome_message || ''} onChange={e => u('welcome_message', e.target.value)} rows={4} placeholder="Escribe tu mensaje o déjalo vacío para usar el menú automático..." />
-                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
-                  Si lo dejas vacío, el bot generará automáticamente: "{config.business_emoji} ¡Hola! Bienvenido a {tenantName}..." seguido de la lista de opciones.
-                </p>
-              </div>
-              <div className="input-group">
-                <label>Emoji de tu negocio</label>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {emojiOptions.map(e => (
-                    <button key={e} onClick={() => u('business_emoji', e)} style={{
-                      width: 40, height: 40, fontSize: '1.3rem', border: '2px solid',
-                      borderColor: config.business_emoji === e ? 'var(--color-primary)' : 'var(--color-border)',
-                      background: config.business_emoji === e ? 'rgba(124,58,237,0.15)' : 'var(--color-bg-input)',
-                      borderRadius: 'var(--radius-md)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>{e}</button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 40, alignItems: 'start' }}>
+        
+        {/* LEFT COLUMN: CONFIG */}
+        <div className="flex" style={{ flexDirection: 'column', gap: 32 }}>
+          
+          {/* STATIC CONFIG */}
+          {!isAI && (
+            <>
+              <div className="glass-card">
+                <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>🎭 Plantillas Rápidas</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+                  {welcomeTemplates.map(tpl => (
+                    <button key={tpl.id} onClick={() => {
+                      u('business_emoji', tpl.emoji);
+                      u('static_options', tpl.options);
+                    }} style={{
+                      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: 'var(--radius-md)', padding: '16px', cursor: 'pointer',
+                      textAlign: 'left', transition: 'all 0.3s'
+                    }}
+                      className="template-btn"
+                    >
+                      <div style={{ fontSize: '1.5rem', marginBottom: 8 }}>{tpl.emoji}</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#fff' }}>{tpl.name}</div>
+                    </button>
                   ))}
+                  <style>{`.template-btn:hover { background: rgba(124,58,237,0.1)!important; border-color: var(--color-primary)!important; transform: translateY(-2px); }`}</style>
                 </div>
               </div>
-            </div>
 
-            {/* Dynamic Options */}
-            <div className="card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-lg)' }}>
-                <h4>🔢 Opciones del Menu ({config.static_options.length}/5)</h4>
-                {config.static_options.length < 5 && (
-                  <button className="btn btn-secondary btn-sm" onClick={addOption}>+ Agregar Opcion</button>
-                )}
-              </div>
+              <div className="glass-card">
+                 <h3 style={{ marginBottom: 24, fontSize: '1.2rem' }}>💬 Configuración del Menú</h3>
+                 
+                 <div style={{ marginBottom: 24 }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-mute)', textTransform: 'uppercase', marginBottom: 8 }}>Mensaje de Bienvenida</label>
+                    <textarea className="input-premium" value={config.welcome_message || ''} onChange={e => u('welcome_message', e.target.value)} rows={3} placeholder="¡Hola! ¿Cómo podemos ayudarte hoy?" />
+                 </div>
 
-              {config.static_options.map((opt, i) => (
-                <div key={i} style={{
-                  background: 'var(--color-bg-input)', borderRadius: 'var(--radius-md)',
-                  padding: 'var(--space-md)', marginBottom: 'var(--space-md)',
-                  border: '1px solid var(--color-border)'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-sm)' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{numberEmojis[i]} Opcion {i + 1}</span>
-                    {config.static_options.length > 1 && (
-                      <button className="btn btn-danger btn-sm" onClick={() => removeOption(i)} style={{ padding: '4px 8px', fontSize: '0.75rem' }}>✕ Eliminar</button>
-                    )}
-                  </div>
-                  <div className="input-group" style={{ marginBottom: 'var(--space-sm)' }}>
-                    <label>Nombre de la opcion</label>
-                    <input className="input-field" value={opt.label} onChange={e => updateOption(i, 'label', e.target.value)} placeholder="Ej: Ver Menu 📋" />
-                  </div>
-                  <div className="input-group">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 4 }}>
-                      <label style={{ margin: 0 }}>Respuesta cuando eligen esta opcion</label>
-                      {opt.response !== '__FLOW_BOOKING__' ? (
-                        <button className="btn btn-secondary btn-sm" onClick={() => updateOption(i, 'response', '__FLOW_BOOKING__')} style={{ fontSize: '0.7rem', padding: '2px 6px' }}>
-                          📅 Usar Link de Reservas
-                        </button>
-                      ) : (
-                        <span className="badge badge-active" style={{ fontSize: '0.7rem' }}>Link de Reservas Activado</span>
-                      )}
-                    </div>
-                    {opt.response === '__FLOW_BOOKING__' ? (
-                      <div style={{ padding: 'var(--space-md)', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 'var(--radius-sm)', color: 'var(--color-primary-light)', fontSize: '0.85rem' }}>
-                        <strong>✨ Enlace de Reservas Automático:</strong><br/>
-                        Al seleccionar esta opcion, el bot enviará el enlace de agendamiento (Calendly/Cal.com) configurado más abajo.
+                 <div className="flex justify-between items-center" style={{ marginBottom: 16 }}>
+                    <h4 style={{ fontSize: '1rem', color: '#fff' }}>Botones de Opción ({config.static_options.length}/5)</h4>
+                    {config.static_options.length < 5 && <button className="btn-premium" style={{ background: 'rgba(255,255,255,0.05)', padding: '8px 16px', fontSize: '0.8rem' }} onClick={addOption}>+ Añadir</button>}
+                 </div>
+
+                 <div className="flex" style={{ flexDirection: 'column', gap: 16 }}>
+                    {config.static_options.map((opt, i) => (
+                      <div key={i} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', padding: 20 }}>
+                         <div className="flex justify-between items-center" style={{ marginBottom: 12 }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--color-primary-light)' }}>OPCIÓN {i+1}</span>
+                            <button onClick={() => removeOption(i)} style={{ background: 'none', border: 'none', color: '#EF4444', fontSize: '0.75rem', cursor: 'pointer' }}>Eliminar</button>
+                         </div>
+                         <input className="input-premium" style={{ marginBottom: 12 }} value={opt.label} onChange={e => updateOption(i, 'label', e.target.value)} placeholder="Ej: Ver Servicios" />
+                         <textarea className="input-premium" style={{ height: 80 }} value={opt.response} onChange={e => updateOption(i, 'response', e.target.value)} placeholder="Respuesta del bot..." />
                       </div>
+                    ))}
+                 </div>
+              </div>
+            </>
+          )}
+
+          {/* AI CONFIG */}
+          {isAI && (
+            <>
+              <div className="glass-card">
+                 <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>🔑 Conexión OpenAI</h3>
+                 <p style={{ color: 'var(--color-text-dim)', fontSize: '0.85rem', marginBottom: 16 }}>Introduce tu API Key para habilitar el cerebro de la IA.</p>
+                 <input type="password" className="input-premium" placeholder={config.has_openai_key ? '••••••••••••••••••••' : 'sk-...'} value={newKey} onChange={e => setNewKey(e.target.value)} />
+              </div>
+
+              <div className="glass-card">
+                 <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>🧠 Personalidad de la IA</h3>
+                 <p style={{ color: 'var(--color-text-dim)', fontSize: '0.85rem', marginBottom: 16 }}>Describe quién es tu bot y cómo debe responder.</p>
+                 <textarea className="input-premium" value={config.system_prompt || ''} onChange={e => u('system_prompt', e.target.value)} rows={10} style={{ fontFamily: 'monospace', fontSize: '0.9rem' }} />
+              </div>
+
+              <div className="glass-card">
+                 <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>⚙️ Ajustes Avanzados</h3>
+                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-text-mute)', marginBottom: 8 }}>Modelo IA</label>
+                      <select className="input-premium" value={config.ai_model || 'gpt-4o-mini'} onChange={e => u('ai_model', e.target.value)}>
+                        <option value="gpt-4o-mini">GPT-4o Mini (Veloz)</option>
+                        <option value="gpt-4o">GPT-4o (Poderoso)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-text-mute)', marginBottom: 8 }}>Creatividad ({config.temperature || 0.7})</label>
+                      <input type="range" min="0" max="1" step="0.1" value={config.temperature || 0.7} onChange={e => u('temperature', parseFloat(e.target.value))} style={{ width: '100%', marginTop: 10 }} />
+                    </div>
+                 </div>
+              </div>
+            </>
+          )}
+
+          {/* SHARED SETTINGS */}
+          <div className="glass-card">
+              <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>📅 Enlace de Reservas</h3>
+              <p style={{ color: 'var(--color-text-dim)', fontSize: '0.85rem', marginBottom: 16 }}>Si usas Calendly o Cal.com, pégalo aquí para que el bot pueda ofrecer turnos.</p>
+              <input className="input-premium" value={config.booking_url || ''} onChange={e => u('booking_url', e.target.value)} placeholder="https://calendly.com/mi-negocio" />
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN: PREVIEW */}
+        <div style={{ position: 'sticky', top: 40 }}>
+           <h3 style={{ marginBottom: 24, fontSize: '1rem', color: 'var(--color-text-mute)', textAlign: 'center' }}>VISTA PREVIA EN VIVO</h3>
+           <div className="phone-v2" style={{ margin: '0 auto' }}>
+              <div className="phone-v2-screen">
+                 <div style={{ background: '#1F2C34', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>{config.business_emoji || '🏪'}</div>
+                    <div style={{ flex: 1 }}>
+                       <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>{tenantName}</div>
+                       <div style={{ fontSize: '0.7rem', color: '#10B981' }}>en línea</div>
+                    </div>
+                 </div>
+                 
+                 {/* Preview content switcher */}
+                 <div style={{ flex: 1, padding: 16, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {!isAI ? (
+                      <>
+                        <div style={{ alignSelf: 'flex-start', background: '#1F2C34', color: '#fff', padding: '8px 12px', borderRadius: '8px', borderTopLeftRadius: 0, fontSize: '0.85rem', maxWidth: '85%', whiteSpace: 'pre-wrap' }}>
+                           {previewWelcome()}
+                        </div>
+                        {(config.static_options || []).map((opt, i) => (
+                          <div key={i} style={{ alignSelf: 'flex-end', background: '#005C4B', color: '#fff', padding: '8px 12px', borderRadius: '8px', borderTopRightRadius: 0, fontSize: '0.85rem', marginTop: 8 }}>
+                             {i+1}
+                          </div>
+                        ))}
+                      </>
                     ) : (
-                      <textarea className="input-field" value={opt.response} onChange={e => updateOption(i, 'response', e.target.value)} rows={3} style={{ width: '100%' }} placeholder="Lo que el bot responde..." />
+                      <>
+                        <div style={{ alignSelf: 'flex-end', background: '#005C4B', color: '#fff', padding: '8px 12px', borderRadius: '8px', borderTopRightRadius: 0, fontSize: '0.85rem' }}>
+                           Hola! Quiero reservar para mañana.
+                        </div>
+                        <div style={{ alignSelf: 'flex-start', background: '#1F2C34', color: '#fff', padding: '8px 12px', borderRadius: '8px', borderTopLeftRadius: 0, fontSize: '0.85rem', maxWidth: '85%', fontStyle: 'italic', opacity: 0.8 }}>
+                           La IA responde siguiendo tus instrucciones de personalidad...
+                        </div>
+                        <div style={{ alignSelf: 'flex-end', background: '#005C4B', color: '#fff', padding: '8px 12px', borderRadius: '8px', borderTopRightRadius: 0, fontSize: '0.85rem' }}>
+                           ¿Venden pizzas?
+                        </div>
+                        <div style={{ alignSelf: 'flex-start', background: '#1F2C34', color: '#fff', padding: '8px 12px', borderRadius: '8px', borderTopLeftRadius: 0, fontSize: '0.85rem', maxWidth: '85%', fontStyle: 'italic', opacity: 0.8 }}>
+                           ...y aclarando dudas específicas basadas en el conocimiento que le brindaste.
+                        </div>
+                      </>
                     )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Booking URL */}
-            <div className="card">
-              <h4 style={{ marginBottom: 'var(--space-sm)' }}>📅 Link de Agendamiento / Turnos</h4>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 'var(--space-sm)' }}>Pega aquí tu enlace de Calendly, Cal.com o similar. El bot se lo enviará a los clientes cuando soliciten agendar un turno.</p>
-              <input type="url" className="input-field" value={config.booking_url || ''} onChange={e => u('booking_url', e.target.value)} placeholder="https://calendly.com/tu-negocio" style={{ width: '100%' }} />
-            </div>
-
-            {/* Default Response */}
-            <div className="card">
-              <h4 style={{ marginBottom: 'var(--space-sm)' }}>💬 Respuesta por defecto</h4>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 'var(--space-sm)' }}>Se usa si algo falla o el cliente escribe algo inesperado.</p>
-              <textarea className="input-field" value={config.default_response || ''} onChange={e => u('default_response', e.target.value)} rows={2} style={{ width: '100%' }} />
-            </div>
-          </div>
-
-          {/* Preview */}
-          <div>
-            <div style={{ position: 'sticky', top: 'var(--space-xl)' }}>
-              <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--color-text-secondary)' }}>📱 Vista previa</h4>
-              <div className="phone-preview">
-                <div className="phone-header">
-                  <div className="avatar">{config.business_emoji || '🏪'}</div>
-                  <div><div className="chat-name">{tenantName}</div><div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>en linea</div></div>
-                </div>
-                <div className="phone-messages">
-                  <div className="message-user">Hola!</div>
-                  <div className="message-bot">{previewWelcome()}</div>
-                  <div className="message-user">1</div>
-                  <div className="message-bot">{config.static_options[0]?.response || '...'}</div>
-                </div>
+                 </div>
               </div>
-            </div>
-          </div>
+           </div>
         </div>
-      )}
 
-      {/* ========== AI MODE ========== */}
-      {isAI && (
-        <div className="grid-2">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-            <div className="card" style={{ borderColor: !config.has_openai_key && !newKey ? 'var(--color-warning)' : 'var(--color-border)' }}>
-              <h4 style={{ marginBottom: 'var(--space-sm)' }}>🔑 Tu API Key de OpenAI</h4>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 'var(--space-md)' }}>
-                Crea tu key en <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">platform.openai.com/api-keys</a>
-              </p>
-              {config.has_openai_key && !newKey && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)', marginBottom: 'var(--space-sm)' }}>
-                  <span className="badge badge-active">Conectada</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>{config.openai_api_key_masked}</span>
-                </div>
-              )}
-              <input type="password" className="input-field" placeholder={config.has_openai_key ? 'Dejar vacio para mantener la actual' : 'sk-...'} value={newKey} onChange={e => setNewKey(e.target.value)} style={{ width: '100%' }} />
-            </div>
-
-            <div className="card">
-              <h4 style={{ marginBottom: 'var(--space-sm)' }}>🧠 Instrucciones para la IA</h4>
-              <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap', marginBottom: 'var(--space-md)' }}>
-                {promptTemplates.map(t => (<button key={t.name} className="btn btn-secondary btn-sm" onClick={() => u('system_prompt', t.prompt)}>{t.name}</button>))}
-              </div>
-              <textarea className="input-field" value={config.system_prompt || ''} onChange={e => u('system_prompt', e.target.value)} rows={8} style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }} />
-            </div>
-
-            <div className="card">
-              <h4 style={{ marginBottom: 'var(--space-md)' }}>⚙️ Parametros</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-md)' }}>
-                <div className="input-group">
-                  <label>Modelo</label>
-                  <select className="input-field" value={config.ai_model || 'gpt-4o-mini'} onChange={e => u('ai_model', e.target.value)}>
-                    <option value="gpt-4o-mini">GPT-4o Mini</option>
-                    <option value="gpt-4o">GPT-4o</option>
-                    <option value="gpt-3.5-turbo">GPT-3.5</option>
-                  </select>
-                </div>
-                <div className="input-group">
-                  <label>Max Tokens</label>
-                  <input type="number" className="input-field" value={config.max_tokens || 300} onChange={e => u('max_tokens', parseInt(e.target.value))} min={50} max={2000} />
-                </div>
-                <div className="input-group">
-                  <label>Temperatura ({config.temperature || 0.7})</label>
-                  <input type="range" min="0" max="1" step="0.1" value={config.temperature || 0.7} onChange={e => u('temperature', parseFloat(e.target.value))} style={{ width: '100%', marginTop: 8 }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div style={{ position: 'sticky', top: 'var(--space-xl)' }}>
-              <h4 style={{ marginBottom: 'var(--space-md)', color: 'var(--color-text-secondary)' }}>📱 Vista previa (modo IA)</h4>
-              <div className="phone-preview">
-                <div className="phone-header">
-                  <div className="avatar">🧠</div>
-                  <div><div className="chat-name">{tenantName} (IA)</div><div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>inteligencia artificial</div></div>
-                </div>
-                <div className="phone-messages">
-                  <div className="message-user">Quiero reservar para 4 el viernes</div>
-                  <div className="message-bot" style={{ fontStyle: 'italic', opacity: 0.8 }}>La IA responde segun tus instrucciones...</div>
-                  <div className="message-user">Tienen opciones vegetarianas?</div>
-                  <div className="message-bot" style={{ fontStyle: 'italic', opacity: 0.8 }}>...y mantiene contexto de la conversacion.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
