@@ -34,49 +34,93 @@ function ResetPasswordForm() {
     finally { setLoading(false); }
   }
 
+  const PasswordInput = ({ field, placeholder, show, onToggle }) => (
+    <div style={{ position: 'relative' }}>
+      <input
+        type={show ? 'text' : 'password'}
+        className="input-premium"
+        placeholder={placeholder}
+        value={form[field]}
+        onChange={e => u(field, e.target.value)}
+        required minLength={8}
+        style={{ paddingRight: 48 }}
+      />
+      <button 
+        type="button" 
+        onClick={onToggle} 
+        style={{
+          position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+          background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--color-text-mute)'
+        }}
+      >
+        {show ? '🙈' : '👁️'}
+      </button>
+    </div>
+  );
+
   if (!token) return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header"><span className="logo">❌</span><h1>Link inválido</h1><p>Este link de recupero no es válido o expiró.</p></div>
-        <a href="/forgot-password" className="btn btn-primary btn-full">Solicitar nuevo link</a>
+    <div className="auth-wrapper animate-fade">
+      <div className="glass-card auth-card-v2">
+        <div className="auth-header">
+          <span className="logo">❌</span>
+          <h1 className="font-display">Enlace Inválido</h1>
+          <p>Este enlace de recuperación no es válido o ya ha expirado.</p>
+        </div>
+        <a href="/forgot-password" className="btn-premium btn-p-primary" style={{ textDecoration: 'none', width: '100%', justifyContent: 'center' }}>
+          Solicitar nuevo enlace
+        </a>
       </div>
     </div>
   );
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <div className="auth-wrapper animate-fade">
+      <div className="glass-card auth-card-v2">
         <div className="auth-header">
           <span className="logo">🔒</span>
-          <h1>Nueva Contraseña</h1>
-          <p>Elegí una contraseña segura</p>
+          <h1 className="font-display">Nueva Contraseña</h1>
+          <p>Crea una nueva contraseña segura para tu cuenta</p>
         </div>
 
         {success ? (
-          <div style={{ textAlign: 'center', padding: 'var(--space-lg)' }}>
-            <div style={{ fontSize: '3rem', marginBottom: 'var(--space-md)' }}>✅</div>
-            <h3>¡Contraseña actualizada!</h3>
-            <p style={{ color: 'var(--color-text-secondary)', marginTop: 8 }}>Redirigiendo al login...</p>
+          <div className="animate-fade" style={{ padding: '24px 0' }}>
+            <div style={{ fontSize: '4rem', marginBottom: 24, filter: 'drop-shadow(0 0 20px rgba(16, 185, 129, 0.3))' }}>✅</div>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: 12, color: '#fff' }}>¡Actualizada!</h3>
+            <p style={{ color: 'var(--color-text-dim)', marginBottom: 32 }}>
+              Tu contraseña ha sido cambiada con éxito. <br />
+              Redirigiendo al inicio de sesión...
+            </p>
           </div>
         ) : (
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {error && <div className="toast toast-error" style={{ position: 'relative', top: 0, right: 0 }}>{error}</div>}
-            <div className="input-group">
-              <label>Nueva contraseña</label>
-              <div style={{ position: 'relative' }}>
-                <input type={showPassword ? 'text' : 'password'} className="input-field" placeholder="Mínimo 8 caracteres" value={form.password} onChange={e => u('password', e.target.value)} required minLength={8} style={{ paddingRight: 44 }} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: 'var(--color-text-muted)' }}>{showPassword ? '🙈' : '👁️'}</button>
+          <form className="auth-form-v2" onSubmit={handleSubmit}>
+            {error && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#EF4444', padding: '12px', borderRadius: 'var(--radius-md)', fontSize: '0.85rem' }}>
+                {error}
               </div>
+            )}
+            
+            <div>
+              <label>Nueva Contraseña</label>
+              <PasswordInput 
+                field="password" 
+                placeholder="Mínimo 8 caracteres" 
+                show={showPassword} 
+                onToggle={() => setShowPassword(!showPassword)} 
+              />
             </div>
-            <div className="input-group">
-              <label>Confirmar contraseña</label>
-              <div style={{ position: 'relative' }}>
-                <input type={showConfirm ? 'text' : 'password'} className="input-field" placeholder="Repetir contraseña" value={form.confirmPassword} onChange={e => u('confirmPassword', e.target.value)} required minLength={8} style={{ paddingRight: 44 }} />
-                <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: 'var(--color-text-muted)' }}>{showConfirm ? '🙈' : '👁️'}</button>
-              </div>
+            
+            <div>
+              <label>Confirmar Contraseña</label>
+              <PasswordInput 
+                field="confirmPassword" 
+                placeholder="Repite tu contraseña" 
+                show={showConfirm} 
+                onToggle={() => setShowConfirm(!showConfirm)} 
+              />
             </div>
-            <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}>
-              {loading ? 'Guardando...' : '🔒 Cambiar contraseña'}
+            
+            <button type="submit" className="btn-premium btn-p-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center', marginTop: 12 }}>
+              {loading ? 'Guardando...' : '🔒 Cambiar Contraseña'}
             </button>
           </form>
         )}

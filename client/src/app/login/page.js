@@ -29,45 +29,69 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <div className="auth-wrapper animate-fade">
+      <div className="glass-card auth-card-v2">
         <div className="auth-header">
           <span className="logo">🤖</span>
-          <h1>Bienvenido</h1>
-          <p>Ingresa a tu panel de control</p>
+          <h1 className="font-display">Bienvenido</h1>
+          <p>Ingresa a tu panel de control para gestionar tu bot</p>
         </div>
-        <form className="auth-form" onSubmit={handleSubmit}>
-          {error && <div className="toast toast-error" style={{ position: 'relative', top: 0, right: 0 }}>{error}</div>}
-          <div className="input-group">
-            <label>Email</label>
-            <input type="email" className="input-field" placeholder="tu@negocio.com" value={form.email} onChange={e => u('email', e.target.value)} required />
+        
+        <form className="auth-form-v2" onSubmit={handleSubmit}>
+          {error && (
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#EF4444', padding: '12px', borderRadius: 'var(--radius-md)', fontSize: '0.85rem' }}>
+              {error}
+            </div>
+          )}
+          
+          <div>
+            <label>Correo Electrónico</label>
+            <input 
+              type="email" 
+              className="input-premium" 
+              placeholder="tu@negocio.com" 
+              value={form.email} 
+              onChange={e => u('email', e.target.value)} 
+              required 
+            />
           </div>
-          <div className="input-group">
-            <label>Contraseña</label>
+          
+          <div>
+            <div className="flex justify-between items-center" style={{ marginBottom: 8 }}>
+              <label style={{ marginBottom: 0 }}>Contraseña</label>
+              <a href="/forgot-password" style={{ fontSize: '0.75rem', color: 'var(--color-primary-light)', textDecoration: 'none' }}>¿La olvidaste?</a>
+            </div>
             <div style={{ position: 'relative' }}>
               <input
                 type={showPassword ? 'text' : 'password'}
-                className="input-field"
-                placeholder="Tu contraseña"
+                className="input-premium"
+                placeholder="Tu contraseña secreta"
                 value={form.password}
                 onChange={e => u('password', e.target.value)}
                 required
-                style={{ paddingRight: 44 }}
+                style={{ paddingRight: 48 }}
               />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} style={{
-                position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-                background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: 'var(--color-text-muted)'
-              }}>{showPassword ? '🙈' : '👁️'}</button>
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)} 
+                style={{
+                  position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--color-text-mute)'
+                }}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
             </div>
           </div>
-          <div style={{ textAlign: 'right', marginTop: -8 }}>
-            <a href="/forgot-password" style={{ fontSize: '0.85rem', color: 'var(--color-primary-light)' }}>¿Olvidaste tu contraseña?</a>
-          </div>
-          <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading} style={{ marginTop: 8 }}>
-            {loading ? 'Ingresando...' : '🚀 Ingresar'}
+          
+          <button type="submit" className="btn-premium btn-p-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center', marginTop: 12 }}>
+            {loading ? 'Validando...' : '🚀 Iniciar Sesión'}
           </button>
         </form>
-        <div className="auth-divider">¿No tenes cuenta? <a href="/register" className="auth-link">Registrate gratis</a></div>
+        
+        <div className="auth-footer">
+          ¿No tienes una cuenta todavía? <a href="/register">Regístrate Gratis</a>
+        </div>
       </div>
     </div>
   );
